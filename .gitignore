@@ -21,3 +21,6 @@ prisma/*.db-*
 public/uploads/*
 !public/uploads/.gitkeep
 e2e-screenshots/
+
+# Dossier de nettoyage temporaire
+_a-supprimer/
