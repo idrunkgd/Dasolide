@@ -22,9 +22,10 @@ WORKDIR /app
 
    # ---------------------------------------------------------------- dépendances
    FROM base AS deps
-   COPY package.json package-lock.json scripts/set-db-provider.mjs ./
-   RUN node set-db-provider.mjs postgresql \
-    && npm ci --no-audit --no-fund
+COPY package.json package-lock.json scripts/set-db-provider.mjs ./
+COPY prisma ./prisma
+RUN node set-db-provider.mjs postgresql \
+ && npm ci --no-audit --no-fund
 
 # ---------------------------------------------------------------------- build
    FROM base AS builder
