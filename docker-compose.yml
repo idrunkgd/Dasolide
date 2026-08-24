@@ -1,0 +1,66 @@
+# ============================================================================
+# Muscu — pile complète (application + PostgreSQL)
+#
+# Utile pour :
+#   • tester l'image de production en local  →  docker compose up --build
+#   • déployer sur Coolify en mode « Docker Compose » si tu préfères
+#     tout décrire dans un seul fichier plutôt que d'utiliser la base
+#     managée de Coolify.
+#
+# Sur Coolify, laisse la variable APP_URL vide : Coolify injecte le domaine.
+# ============================================================================
+
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-muscu}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD est obligatoire}
+      POSTGRES_DB: ${POSTGRES_DB:-muscu}
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-muscu} -d ${POSTGRES_DB:-muscu}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 20s
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        APP_TIMEZONE: ${APP_TIMEZONE:-Europe/Brussels}
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER:-muscu}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB:-muscu}
+      AUTH_SECRET: ${AUTH_SECRET:?AUTH_SECRET est obligatoire — openssl rand -base64 32}
+      ADMIN_EMAIL: ${ADMIN_EMAIL:-}
+      ALLOWED_ORIGINS: ${ALLOWED_ORIGINS:-}
+      NODE_ENV: production
+      PORT: 3000
+      TZ: ${APP_TIMEZONE:-Europe/Brussels}
+    ports:
+      - "${APP_PORT:-3000}:3000"
+    volumes:
+      # Les photos de progression doivent survivre aux redéploiements.
+      - uploads:/app/public/uploads
+    healthcheck:
+      test:
+        - CMD
+        - node
+        - -e
+        - "fetch('http://127.0.0.1:3000/api/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+
+volumes:
+  db-data:
+  uploads:

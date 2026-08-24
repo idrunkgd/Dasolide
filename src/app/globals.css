@@ -1,0 +1,223 @@
+@import "tailwindcss";
+
+/* ==========================================================================
+   MUSCU — identité graphique
+   Sombre par défaut, contrastée, lisible à bout de bras dans une salle.
+   Toutes les couleurs passent par des variables : le thème clair et la
+   couleur d'accent se changent en réécrivant seulement ces variables.
+   ========================================================================== */
+
+:root {
+  /* Accent — surchargé par data-accent (voir plus bas) */
+  --accent-h: 82;
+  --accent-s: 84%;
+  --accent-l: 55%;
+
+  --accent: hsl(var(--accent-h) var(--accent-s) var(--accent-l));
+  --accent-soft: hsl(var(--accent-h) var(--accent-s) var(--accent-l) / 0.14);
+  --accent-border: hsl(var(--accent-h) var(--accent-s) var(--accent-l) / 0.35);
+  --accent-contrast: hsl(var(--accent-h) 60% 8%);
+
+  /* Fond & surfaces — thème sombre (défaut) */
+  --bg: hsl(220 16% 5%);
+  --bg-elevated: hsl(220 14% 8%);
+  --surface: hsl(220 13% 10%);
+  --surface-2: hsl(220 12% 14%);
+  --surface-3: hsl(220 11% 18%);
+  --border: hsl(220 10% 20%);
+  --border-strong: hsl(220 10% 28%);
+
+  --text: hsl(210 20% 97%);
+  --text-muted: hsl(215 12% 65%);
+  --text-subtle: hsl(215 10% 48%);
+
+  --success: hsl(152 65% 45%);
+  --warning: hsl(38 92% 55%);
+  --danger: hsl(0 72% 58%);
+  --info: hsl(210 90% 62%);
+
+  --shadow-card: 0 1px 2px hsl(0 0% 0% / 0.4), 0 8px 24px -12px hsl(0 0% 0% / 0.6);
+
+  --radius: 1.25rem;
+  --nav-height: 4.25rem;
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+[data-theme="light"] {
+  --bg: hsl(220 30% 97%);
+  --bg-elevated: hsl(0 0% 100%);
+  --surface: hsl(0 0% 100%);
+  --surface-2: hsl(220 22% 95%);
+  --surface-3: hsl(220 20% 91%);
+  --border: hsl(220 16% 88%);
+  --border-strong: hsl(220 14% 78%);
+
+  --text: hsl(222 30% 12%);
+  --text-muted: hsl(220 12% 40%);
+  --text-subtle: hsl(220 10% 52%);
+
+  --accent-l: 42%;
+  --accent-contrast: hsl(0 0% 100%);
+  --shadow-card: 0 1px 2px hsl(220 30% 20% / 0.06), 0 10px 30px -18px hsl(220 30% 20% / 0.35);
+}
+
+/* Couleurs d'accent configurables (§3) */
+[data-accent="lime"]   { --accent-h: 82;  --accent-s: 84%; }
+[data-accent="orange"] { --accent-h: 24;  --accent-s: 95%; }
+[data-accent="violet"] { --accent-h: 265; --accent-s: 85%; }
+[data-accent="cyan"]   { --accent-h: 187; --accent-s: 92%; }
+[data-accent="rose"]   { --accent-h: 340; --accent-s: 82%; }
+[data-accent="blue"]   { --accent-h: 217; --accent-s: 91%; }
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-bg-elevated: var(--bg-elevated);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-surface-3: var(--surface-3);
+  --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
+
+  --color-text: var(--text);
+  --color-muted: var(--text-muted);
+  --color-subtle: var(--text-subtle);
+
+  --color-accent: var(--accent);
+  --color-accent-soft: var(--accent-soft);
+  --color-accent-border: var(--accent-border);
+  --color-accent-contrast: var(--accent-contrast);
+
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-danger: var(--danger);
+  --color-info: var(--info);
+
+  --radius-card: var(--radius);
+
+  --font-sans: "SF Pro Display", -apple-system, BlinkMacSystemFont, "Segoe UI",
+    "Inter", "Helvetica Neue", Arial, sans-serif;
+  --font-mono: "SF Mono", ui-monospace, "JetBrains Mono", Menlo, monospace;
+}
+
+@layer base {
+  * {
+    border-color: var(--border);
+  }
+
+  html {
+    -webkit-text-size-adjust: 100%;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  body {
+    background-color: var(--bg);
+    color: var(--text);
+    font-family: var(--font-sans);
+    font-feature-settings: "cv02", "cv03", "cv04", "tnum";
+    overscroll-behavior-y: none;
+    min-height: 100dvh;
+  }
+
+  /* Chiffres alignés partout où l'on compare des valeurs */
+  .tabular {
+    font-variant-numeric: tabular-nums;
+  }
+
+  h1, h2, h3, h4 {
+    letter-spacing: -0.02em;
+    font-weight: 650;
+  }
+
+  button, [role="button"] {
+    touch-action: manipulation;
+  }
+
+  input, select, textarea {
+    font-size: 16px; /* évite le zoom automatique sur iOS */
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+    border-radius: 6px;
+  }
+
+  ::-webkit-scrollbar { width: 8px; height: 8px; }
+  ::-webkit-scrollbar-thumb { background: var(--surface-3); border-radius: 8px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+}
+
+@layer components {
+  .card {
+    background-color: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-card);
+  }
+
+  .no-scrollbar::-webkit-scrollbar { display: none; }
+  .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+}
+
+/* --------------------------------------------------------------------------
+   Animations — discrètes, jamais décoratives au point de ralentir l'usage.
+   -------------------------------------------------------------------------- */
+
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: none; }
+}
+@keyframes fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes pop {
+  0%   { transform: scale(0.85); opacity: 0; }
+  60%  { transform: scale(1.04); opacity: 1; }
+  100% { transform: scale(1); }
+}
+@keyframes slide-up {
+  from { transform: translateY(100%); }
+  to   { transform: translateY(0); }
+}
+@keyframes pulse-ring {
+  0%   { box-shadow: 0 0 0 0 var(--accent-soft); }
+  70%  { box-shadow: 0 0 0 14px transparent; }
+  100% { box-shadow: 0 0 0 0 transparent; }
+}
+@keyframes shimmer {
+  from { background-position: -200% 0; }
+  to   { background-position: 200% 0; }
+}
+@keyframes confetti-fall {
+  0%   { transform: translateY(-10vh) rotate(0deg); opacity: 1; }
+  100% { transform: translateY(105vh) rotate(720deg); opacity: 0; }
+}
+
+.animate-fade-up { animation: fade-up 0.35s cubic-bezier(0.22, 1, 0.36, 1) both; }
+.animate-fade-in { animation: fade-in 0.25s ease both; }
+.animate-pop { animation: pop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) both; }
+.animate-slide-up { animation: slide-up 0.28s cubic-bezier(0.22, 1, 0.36, 1) both; }
+.animate-pulse-ring { animation: pulse-ring 1.6s ease-out infinite; }
+
+.skeleton {
+  background: linear-gradient(90deg, var(--surface-2) 25%, var(--surface-3) 50%, var(--surface-2) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.4s infinite linear;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Champs numériques de la séance : pas de flèches, gros chiffres */
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+input[type="number"] { -moz-appearance: textfield; }

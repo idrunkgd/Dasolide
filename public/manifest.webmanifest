@@ -1,0 +1,24 @@
+{
+  "name": "Muscu — Entraînement & Nutrition",
+  "short_name": "Muscu",
+  "description": "Suivi de musculation, nutrition et progression.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0b0d10",
+  "theme_color": "#0b0d10",
+  "lang": "fr",
+  "categories": ["health", "fitness", "lifestyle"],
+  "icons": [
+    { "src": "/icons/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" },
+    { "src": "/icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "shortcuts": [
+    { "name": "Démarrer une séance", "url": "/entrainement", "description": "Lancer l'entraînement du jour" },
+    { "name": "Nutrition du jour", "url": "/nutrition" },
+    { "name": "Encoder mon poids", "url": "/progression/poids" }
+  ]
+}

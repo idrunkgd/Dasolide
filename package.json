@@ -1,0 +1,61 @@
+{
+  "name": "muscu",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Application de suivi musculation, nutrition et progression",
+  "scripts": {
+    "dev": "next dev",
+    "build": "prisma generate && next build",
+    "start": "next start",
+    "typecheck": "tsc --noEmit",
+    "setup": "prisma generate && node scripts/apply-migrations.mjs && tsx prisma/seed.ts",
+    "db:migrate": "node scripts/apply-migrations.mjs",
+    "db:generate": "prisma generate",
+    "db:seed": "tsx prisma/seed.ts",
+    "db:studio": "prisma studio",
+    "db:reset": "rm -f prisma/dev.db prisma/dev.db-shm prisma/dev.db-wal && npm run setup",
+    "test:e2e": "node scripts/e2e.mjs",
+    "db:use:sqlite": "node scripts/set-db-provider.mjs sqlite && prisma generate",
+    "db:use:postgres": "node scripts/set-db-provider.mjs postgresql && prisma generate"
+  },
+  "dependencies": {
+    "@dnd-kit/core": "^6.3.1",
+    "@dnd-kit/modifiers": "^9.0.0",
+    "@dnd-kit/sortable": "^10.0.0",
+    "@dnd-kit/utilities": "^3.2.2",
+    "@prisma/adapter-better-sqlite3": "^7.9.1",
+    "@prisma/adapter-pg": "^7.9.1",
+    "@prisma/client": "^7.9.1",
+    "bcryptjs": "^3.0.2",
+    "better-sqlite3": "^13.0.3",
+    "clsx": "^2.1.1",
+    "date-fns": "^4.1.0",
+    "dotenv": "^17.4.2",
+    "framer-motion": "^12.43.0",
+    "jose": "^6.2.10",
+    "lucide-react": "^0.545.0",
+    "next": "15.5.23",
+    "pg": "^8.23.0",
+    "react": "19.2.0",
+    "react-dom": "19.2.0",
+    "recharts": "^2.15.4",
+    "server-only": "^0.0.1",
+    "tailwind-merge": "^3.3.1",
+    "zod": "^4.4.3"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4.3.3",
+    "@types/node": "^22.15.0",
+    "@types/pg": "^8.23.1",
+    "@types/react": "^19.2.0",
+    "@types/react-dom": "^19.2.0",
+    "playwright": "^1.62.1",
+    "prisma": "^7.9.1",
+    "tailwindcss": "^4.3.3",
+    "tsx": "^4.20.0",
+    "typescript": "^5.9.0"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}
