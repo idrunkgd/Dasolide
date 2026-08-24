@@ -6,6 +6,15 @@ import { prisma } from "@/lib/db";
 import { createSession, destroySession, hashPassword, verifyPassword } from "@/lib/auth";
 import { loginSchema, registerSchema, zodError, type ActionResult } from "@/lib/validation";
 
+/**
+ * Le compte administrateur est désigné par la variable d'environnement
+ * ADMIN_EMAIL. Non renseignée, aucun compte n'a accès à /admin.
+ */
+function isAdminEmail(email: string): boolean {
+  const admin = process.env.ADMIN_EMAIL?.trim().toLowerCase();
+  return Boolean(admin) && admin === email.trim().toLowerCase();
+}
+
 export async function registerAction(_prev: unknown, formData: FormData): Promise<ActionResult> {
   const parsed = registerSchema.safeParse({
     name: formData.get("name"),
@@ -27,6 +36,7 @@ export async function registerAction(_prev: unknown, formData: FormData): Promis
       email,
       name,
       passwordHash: await hashPassword(password),
+      role: isAdminEmail(email) ? "ADMIN" : "USER",
       settings: { create: {} },
     },
   });
@@ -50,8 +60,15 @@ export async function loginAction(_prev: unknown, formData: FormData): Promise<A
   const valid = await verifyPassword(parsed.data.password, user.passwordHash);
   if (!valid) return invalid;
 
-  await prisma.user.update({ where: { id: user.id }, data: { lastSeenAt: new Date() } });
-  await createSession({ userId: user.id, email: user.email, role: user.role });
+  // Le rôle est réévalué à chaque connexion : renseigner ADMIN_EMAIL suffit à
+  // donner (ou retirer) l'accès à /admin, sans toucher à la base.
+  const role = isAdminEmail(user.email) ? "ADMIN" : user.role === "ADMIN" ? "USER" : user.role;
+
+  await prisma.user.update({
+    where: { id: user.id },
+    data: { lastSeenAt: new Date(), ...(role !== user.role ? { role } : {}) },
+  });
+  await createSession({ userId: user.id, email: user.email, role });
 
   redirect(user.onboardedAt ? "/" : "/onboarding");
 }

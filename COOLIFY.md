@@ -86,7 +86,7 @@ Onglet **Environment Variables**. Ajoute-les **avant** le premier déploiement.
 |---|---|---|
 | `DATABASE_URL` | l'URL interne PostgreSQL de l'étape 2 | oui |
 | `AUTH_SECRET` | `openssl rand -base64 32` | oui |
-| `ADMIN_EMAIL` | ton adresse email | non |
+| `ADMIN_EMAIL` | ton adresse email | non — mais recommandé |
 | `ALLOWED_ORIGINS` | ton domaine, ex. `muscu.mondomaine.be` | seulement en cas de souci (voir §8) |
 
 Génère le secret sur ta machine :
@@ -97,6 +97,11 @@ openssl rand -base64 32
 
 Ce secret signe les cookies de session. Le changer déconnecte tout le monde ;
 le perdre n'entraîne aucune perte de données.
+
+`ADMIN_EMAIL` désigne le compte qui aura accès à `/admin` : le rôle est
+réévalué à chaque connexion, donc inscris-toi avec cette adresse (ou reconnecte-toi
+si le compte existe déjà) et l'accès apparaît. Laissée vide, la page
+d'administration n'est accessible à personne.
 
 Coche **Build Variable** uniquement si une variable doit exister pendant le
 build. Ici, aucune ne le doit : tout est lu au démarrage.
@@ -181,6 +186,13 @@ Aucun compte de démonstration n'est créé en production — c'est voulu.
 **Le build échoue sur `npm ci`.**
 Le `package-lock.json` doit être commité et à jour. `npm install` puis
 recommite-le.
+
+**Le build échoue sur `prisma generate`.**
+Cette étape télécharge le moteur de schéma Prisma. Le serveur qui construit
+l'image doit pouvoir joindre `registry.npmjs.org` et `binaries.prisma.sh` en
+sortie. Sur un serveur derrière un pare-feu sortant strict, autorise ces deux
+domaines. Rien de tout cela n'est nécessaire à l'exécution : le conteneur qui
+tourne n'a besoin que de la base de données.
 
 **Le conteneur redémarre en boucle avec « DATABASE_URL n'est pas défini ».**
 La variable n'est pas visible au runtime. Vérifie qu'elle est bien dans
