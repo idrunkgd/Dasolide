@@ -20,21 +20,19 @@ ENV TZ=$APP_TIMEZONE \
     NEXT_PUBLIC_APP_TIMEZONE=$APP_TIMEZONE
 WORKDIR /app
 
-# ---------------------------------------------------------------- dépendances
-FROM base AS deps
-COPY package.json package-lock.json ./
-RUN npm ci --no-audit --no-fund
+   # ---------------------------------------------------------------- dépendances
+   FROM base AS deps
+   COPY package.json package-lock.json scripts/set-db-provider.mjs ./
+   RUN node set-db-provider.mjs postgresql \
+    && npm ci --no-audit --no-fund
 
 # ---------------------------------------------------------------------- build
-FROM base AS builder
-COPY --from=deps /app/node_modules ./node_modules
-COPY . .
-
-# La production tourne sur PostgreSQL : on fige le provider avant de générer
-# le client Prisma.
-RUN node scripts/set-db-provider.mjs postgresql \
- && npx prisma generate \
- && npm run build
+   FROM base AS builder
+   COPY --from=deps /app/node_modules ./node_modules
+   COPY . .
+   
+   RUN npx prisma generate \
+    && npm run build
 
 # ------------------------------------------------------------------ exécution
 FROM base AS runner
